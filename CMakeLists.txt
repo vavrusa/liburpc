@@ -1,7 +1,7 @@
 # Project
-project(libusbnet)
+project(liburpc)
 set(MAJOR_VERSION 0)
-set(MINOR_VERSION 5)
+set(MINOR_VERSION 1)
 set(VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION})
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -17,18 +17,6 @@ message("-- Build type: ${CMAKE_BUILD_TYPE}")
 if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
    add_definitions(-DDEBUG)
 endif(${CMAKE_BUILD_TYPE} STREQUAL Debug)
-
-# Dependencies
-include(${CMAKE_MODULE_PATH}/FindUSB.cmake)
-find_package(USB REQUIRED)
-if(NOT LIBUSB_FOUND)
-message(FATAL_ERROR "Please install 'libusb' library and development headers.\nRelated packages: libusb, libusb-dev, libusb-devel.")
-endif(NOT LIBUSB_FOUND)
-
-include_directories(${LIBUSB_INCLUDE_DIR})
-if(${LIBUSB_CONST_BUFFERS})
-   add_definitions(-DUSE_USB_CONST_BUFFERS)
-endif(${LIBUSB_CONST_BUFFERS})
 
 # Documentation
 set(DOCUMENTATION_DIR "${CMAKE_SOURCE_DIR}/doc")
