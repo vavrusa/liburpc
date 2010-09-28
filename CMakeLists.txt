@@ -22,9 +22,6 @@ endif(${CMAKE_BUILD_TYPE} STREQUAL Debug)
 set(DOCUMENTATION_DIR "${CMAKE_SOURCE_DIR}/doc")
 include(${CMAKE_MODULE_PATH}/Documentation.cmake)
 
-# Set library prefixes
-SET(LIBDIR "lib${LIB_SUFFIX}")
-
 # Subdirectories
 add_subdirectory(src)
 
