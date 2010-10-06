@@ -7,7 +7,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR}
 SET(LIBDIR "lib${LIB_SUFFIX}")
 
 # Targets
-set(sources  common.c
+set(sources   common.c
               protobase.c
               protocol.c
               protocol.cpp
@@ -16,7 +16,7 @@ set(sources  common.c
               serversocket.cpp 
               cmdflags.cpp
               )
-set(headers  common.h
+set(headers   common.h
               protobase.h
               protocol.h
               protocol.hpp
@@ -30,6 +30,8 @@ set(headers  common.h
 add_library(urpc SHARED ${sources} ${headers})
 add_library(urpc_static STATIC ${sources} ${headers})
 set_target_properties(urpc PROPERTIES VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.0 SOVERSION 1)
+target_link_libraries(urpc pthread)
+target_link_libraries(urpc_static pthread)
 
 # Install
 install( TARGETS urpc

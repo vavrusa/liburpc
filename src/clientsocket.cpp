@@ -68,7 +68,7 @@ class ClientSocket::Private
    std::string tunHost;
    int tunPort;
    int timeout;
-   static pthread_mutex_t mutex;
+   pthread_mutex_t mutex;
 
 };
 
