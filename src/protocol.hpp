@@ -174,11 +174,7 @@ class Struct
 class Iterator
 {
    public:
-      Iterator(Struct& block)
-         : mType(InvalidType), mLength(0), mValue(0), mBlock(block), mPos(0)
-      {
-         enter();
-      }
+      Iterator(Struct& block);
 
       /** Next value.
         */
