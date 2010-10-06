@@ -77,6 +77,7 @@ class Socket
    }
 
    // Returns whether is socket associated
+   /*! \bug This is weird for client, workaround for server. Fix it. */
    bool isOpen() { return mSock != -1; }
 
    // Returns socket id

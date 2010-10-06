@@ -32,6 +32,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <signal.h>
+#include <pthread.h>
 #include <sys/wait.h>
 #include <sys/time.h>
 
@@ -67,6 +68,8 @@ class ClientSocket::Private
    std::string tunHost;
    int tunPort;
    int timeout;
+   static pthread_mutex_t mutex;
+
 };
 
 ClientSocket::ClientSocket(int fd, Auth method)
@@ -76,10 +79,12 @@ ClientSocket::ClientSocket(int fd, Auth method)
    d->tunnel = -1;
    d->timeout = 0;
    d->tunPort = 22;
+   pthread_mutex_init(&d->mutex, NULL);
 }
 
 ClientSocket::~ClientSocket()
 {
+   pthread_mutex_destroy(&d->mutex);
    delete d;
 }
 
@@ -199,6 +204,22 @@ int ClientSocket::close()
    }
 
    return Socket::close();
+}
+
+int ClientSocket::lock()
+{
+   if(pthread_mutex_lock(&d->mutex) != 0)
+       return IOError;
+
+   return Ok;
+}
+
+int ClientSocket::unlock()
+{
+   if(pthread_mutex_unlock(&d->mutex) != 0)
+       return IOError;
+
+   return Ok;
 }
 
 /* popen() alternative, returns child process pid.

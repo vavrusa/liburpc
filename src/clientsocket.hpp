@@ -74,6 +74,12 @@ class ClientSocket : public Socket
      */
    int close();
 
+   /** Lock socket. */
+   int lock();
+
+   /** Unlock socket. */
+   int unlock();
+
    private:
 
    /* Opaque pointer */
