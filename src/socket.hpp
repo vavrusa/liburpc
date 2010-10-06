@@ -59,6 +59,9 @@ class Socket
    // Connect to remote host:port
    int connect(std::string host, int port);
 
+   // Reconnect to already given host
+   int reconnect();
+
    // Listen on given port
    int listen(int port, int addr = All, int limit = 5);
 
@@ -77,8 +80,7 @@ class Socket
    }
 
    // Returns whether is socket associated
-   /*! \bug This is weird for client, workaround for server. Fix it. */
-   bool isOpen() { return mSock != -1; }
+   bool isOpen() { return mOpen; }
 
    // Returns socket id
    int sock() { return mSock; }
@@ -101,7 +103,7 @@ class Socket
    int bind(int port, int addr = All);
 
    private:
-
+   bool mOpen;
    int mSock;
    int mPort;
    sockaddr_in mAddr;

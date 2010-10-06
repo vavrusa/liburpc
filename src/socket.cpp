@@ -32,7 +32,7 @@
 using namespace std;
 
 Socket::Socket(int fd)
-   : mSock(fd), mPort(0)
+   : mSock(fd), mPort(0), mOpen(false)
 {
 }
 
@@ -42,6 +42,11 @@ Socket::~Socket()
 
 int Socket::create()
 {
+   // Skip on existing socket
+   if(mSock != -1) {
+      return Ok;
+   }
+
    // Create socket
    mSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -50,35 +55,46 @@ int Socket::create()
    if(setsockopt(mSock, SOL_SOCKET, SO_REUSEADDR, (const char*) &state, sizeof(state)) < 0)
       return -1;
 
-   return 0;
+   return Ok;
 }
 
 int Socket::connect(std::string host, int port)
 {
+   if(create() < 0)
+      return IOError;
+
+   // Save host and port
+   mHost = host;
+   mPort = port;
+
+   return reconnect();
+}
+
+int Socket::reconnect()
+{
+   // Check host, port and socket
+   if(mHost.empty() || mPort <= 0 || mSock == -1)
+      return ConnectError;
+
    // Ignore multiple connect
    if(isOpen())
       return ConnectError;
 
-   // Create socket
+   // Create host entity
    hostent* hent = 0;
-   if((hent = gethostbyname(host.c_str())) == 0)
+   if((hent = gethostbyname(mHost.c_str())) == 0)
       return BadAddr;
-
-   if(create() < 0)
-      return IOError;
 
    // Connect to host
    bzero(&mAddr, sizeof(mAddr));
    mAddr.sin_family = AF_INET;
-   mAddr.sin_port = htons(port);
+   mAddr.sin_port = htons(mPort);
    memcpy(&mAddr.sin_addr, hent->h_addr, hent->h_length);
    if(::connect(mSock, (sockaddr*) &mAddr, sizeof(mAddr)) < 0) {
       return ConnectError;
    }
 
-   // Done
-   mHost = host;
-   mPort = port;
+   mOpen = true;
    return Ok;
 }
 
@@ -108,6 +124,7 @@ int Socket::listen(int port, int addr, int limit)
    if(::listen(mSock, limit) < 0)
       return IOError;
 
+   mOpen = true;
    return Ok;
 }
 
@@ -136,7 +153,7 @@ int Socket::bind(int port, int addr)
 
    mHost = "localhost";
    mPort = port;
-   return 0;
+   return Ok;
 }
 
 
@@ -150,6 +167,7 @@ int Socket::close()
       mSock = -1;
    }
 
+   mOpen = false;
    return Ok;
 }
 /** @} */
