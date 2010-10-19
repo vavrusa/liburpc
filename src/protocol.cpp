@@ -123,14 +123,7 @@ Struct& Struct::finalize()
 Iterator::Iterator(Struct& block)
    : mType(InvalidType), mLength(0), mValue(0), mBlock(block), mPos(0)
 {
-   // Shift type
-   ++mPos;
-
-   // Shift length size
-   const char* ptr = mBlock.data() + mPos;
-   uint32_t sz;
-   int szlen = unpack_size(ptr, &sz);
-   mPos += szlen;
+   enter();
 }
 
 bool Iterator::next()
