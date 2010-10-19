@@ -29,7 +29,9 @@
 #ifndef __clientsocket_hpp__
 #define __clientsocket_hpp__
 #include "socket.hpp"
+#include "protocol.hpp"
 #include <string>
+using namespace Proto;
 
 /** Client socket reimplementation. */
 class ClientSocket : public Socket
